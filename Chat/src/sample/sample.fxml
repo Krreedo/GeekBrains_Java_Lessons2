@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="532.0"
+            prefWidth="886.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.Controller">
+   <TextArea fx:id="typingArea" layoutX="301.0" layoutY="326.0" onKeyPressed="#sendMessage" opacity="0.5"
+             prefHeight="44.0" prefWidth="303.0" text="Message"/>
+   <TextArea fx:id="messageScreen" editable="false" layoutX="301.0" layoutY="56.0" prefHeight="257.0"
+             prefWidth="354.0"/>
+   <Button layoutX="604.0" layoutY="326.0" mnemonicParsing="false" onMouseClicked="#sendButtonAction" prefHeight="44.0"
+           prefWidth="52.0" text="Send">
+      <font>
+         <Font name="Courier New" size="13.0"/>
+      </font>
+   </Button>
+</AnchorPane>
