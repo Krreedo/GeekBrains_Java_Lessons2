@@ -1,57 +1,35 @@
 package Console.Server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Vector;
 
 
 public class Server {
+    private List<ClientHandler> clients;
+    private AuthService authService;
+
     private int PORT = 8189;
     ServerSocket server = null;
     Socket socket = null;
-    Scanner sc = new Scanner(System.in);
 
-    public Server(){
+
+    public Server() {
+        clients = new Vector<>();
+        authService = new SimpleAuthService();
+
 
         try {
             server = new ServerSocket(PORT);
             System.out.println("Сервер запущен");
-            socket = server.accept();
-            System.out.println("Клиент подключился");
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            while (true) {
+                socket = server.accept();
+                System.out.println("Клиент подключился");
 
-           new Thread(()->{
-               while (true) {
-                   String str = null;
-                   try {
-                       str = in.readUTF();
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-                   assert str != null;
-                   if ("/end".equals(str)) {
-                       System.out.println("Client is offline");
-                       break;
-                   }
-                   System.out.println(str);
-               }
-
-           }).start();
-            new Thread(()->{
-                while (true) {
-                    try {
-                        out.writeUTF(sc.nextLine());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }).start();
-
+                new ClientHandler(this, socket);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,6 +40,36 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public AuthService getAuthService() {
+        return authService;
+    }
+
+    public void broadcastMsg(ClientHandler sender, String msg) {
+        String message = String.format("%s : %s", sender.getNickname(), msg);
+        for (ClientHandler c : clients) {
+            c.sendMsg(message);
+        }
+    }
+
+    public void whisperMsg(ClientHandler sender, String nickname, String msg) {
+        String message = String.format("%s : %s", sender.getNickname(), msg);
+
+        for (ClientHandler c : clients) {
+            if (c.getNickname().equals(nickname)) {
+                c.sendMsg(message);
+            }
+        }
+        sender.sendMsg(message);
+    }
+
+    public void subscribe(ClientHandler clientHandler) {
+        clients.add(clientHandler);
+    }
+
+    public void unsubscribe(ClientHandler clientHandler) {
+        clients.remove(clientHandler);
     }
 
 }
