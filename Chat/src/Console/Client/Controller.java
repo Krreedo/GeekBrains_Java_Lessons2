@@ -55,7 +55,7 @@ public class Controller implements Initializable {
     private Stage stage;
     private Stage regStage;
     private RegController regController;
-    private int timeoutValue = 10000;
+    private int timeoutValue = 120000;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
